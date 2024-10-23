@@ -1,0 +1,7 @@
+# Prislista för olika fordonstyper
+CAR 20 # Pris per timme för bil
+MC 10  # Pris per timme för MC
+BUS 50 # Pris per timme för buss
+CYCLE 5 # Pris per timme för cykel
+
+# Första 10 minuterna är gratis
