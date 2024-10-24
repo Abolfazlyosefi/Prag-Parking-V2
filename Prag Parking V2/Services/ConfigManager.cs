@@ -4,7 +4,7 @@ namespace pragueParkingV2.Core.Services
 {
     public class ConfigurationManager
     {
-        private const string ConfigFilePath = "config.json";
+        private const string ConfigFilePath = "DataAccess/config.json";
 
         public ConfigData LoadConfig()
         {

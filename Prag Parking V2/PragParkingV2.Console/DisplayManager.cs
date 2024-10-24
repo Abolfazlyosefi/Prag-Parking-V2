@@ -18,29 +18,37 @@ namespace pragueParkingV2.ConsoleApp
             while (true)
             {
                 AnsiConsole.Clear();
+                AnsiConsole.MarkupLine(" ___    ____    ___                                        ___    ___");
+                AnsiConsole.MarkupLine("  \\\\    //\\\\    //   II===   II        //===     ====      //\\\\  //\\\\      II===");
+                AnsiConsole.MarkupLine("   \\\\  //  \\\\  //    II___   II       //       //    \\\\   //  \\\\//  \\\\     II___");
+                AnsiConsole.MarkupLine("    \\\\//    \\\\//     II      II       \\\\       \\\\    //  //    --    \\\\    II   ");
+                AnsiConsole.MarkupLine("     --      --      II===   II====    \\\\===     ====   //            \\\\   II===");
+                AnsiConsole.MarkupLine("");
+
                 AnsiConsole.MarkupLine("[bold green]Welcome to Prague Parking![/]");
-                AnsiConsole.MarkupLine("[1] Park a vehicle");
-                AnsiConsole.MarkupLine("[2] Retrieve a vehicle");
-                AnsiConsole.MarkupLine("[3] Show parking garage status");
-                AnsiConsole.MarkupLine("[4] Exit");
+                AnsiConsole.MarkupLine("");
+
 
                 var choice = AnsiConsole.Prompt(
                     new SelectionPrompt<string>()
-                        .AddChoices(new[] { "1", "2", "3", "4" }));
+                       .Title("What would you like to do today?")
+
+                       .AddChoices(new[] { "Park a vehicle", "Retrieve a vehicle", "Show parking garage status", "Exit" }));
 
                 switch (choice)
                 {
-                    case "1":
+                    case "Park a vehicle":
                         ParkVehicle();
                         break;
-                    case "2":
+                    case "Retrieve a vehicle":
                         RetrieveVehicle();
                         break;
-                    case "3":
+                    case "Show parking garage status":
                         ShowParkingGarageStatus();
                         break;
-                    case "4":
-                        return;
+                    case "Exit":
+                        Exit();
+                        break;
                 }
             }
         }
@@ -92,6 +100,30 @@ namespace pragueParkingV2.ConsoleApp
             }
 
             AnsiConsole.Prompt(new TextPrompt<string>("[grey](Press any key to return)[/]"));
+
+        }
+        private void Exit()
+        {
+            AnsiConsole.Clear();
+            AnsiConsole.MarkupLine("[bold red]Are you sure you want to exit?[/]");
+
+            var choice = AnsiConsole.Prompt(
+                new SelectionPrompt<string>()
+                    .Title("Select an option:")
+                    .AddChoices(new[] { "Yes", "No" }));
+
+            if (choice == "Yes")
+            {
+                AnsiConsole.MarkupLine("[green]Exiting the application. Goodbye and please, drive safely![/]");
+                // Eventuell städning eller avslutning av resurser kan göras här.
+                Environment.Exit(0); // Avsluta programmet
+            }
+            else
+            {
+                AnsiConsole.MarkupLine("[yellow]Returning to the main menu...[/]");
+                // Här kan du anropa en metod för att gå tillbaka till huvudmenyn om det behövs.
+            }
         }
     }
+
 }
