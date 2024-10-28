@@ -90,9 +90,13 @@ namespace pragueParkingV2.ConsoleApp
             AnsiConsole.MarkupLine("[bold yellow]Retrieve a Vehicle[/]");
             var licensePlate = AnsiConsole.Ask<string>("Enter the vehicle's license plate:");
 
+            // Hämta parkeringsdurationen
+            var duration = garage.GetParkingDuration(licensePlate);
+
             if (garage.RemoveVehicle(licensePlate))
             {
                 AnsiConsole.MarkupLine($"[green]Vehicle with license plate {licensePlate} has been retrieved.[/]");
+                AnsiConsole.MarkupLine($"[blue]It was parked for: {duration.TotalHours} hours and {duration.Minutes} minutes.[/]");
             }
             else
             {
@@ -100,8 +104,8 @@ namespace pragueParkingV2.ConsoleApp
             }
 
             AnsiConsole.Prompt(new TextPrompt<string>("[grey](Press any key to return)[/]"));
-
         }
+
         private void Exit()
         {
             AnsiConsole.Clear();

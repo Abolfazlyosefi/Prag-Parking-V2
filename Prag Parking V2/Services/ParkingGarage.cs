@@ -1,5 +1,6 @@
 ﻿
 using pragueParkingV2.Core.Models;
+using pragueParkingV2.DataAccess;
 
 namespace pragueParkingV2.Core.Services
 {
@@ -9,16 +10,30 @@ namespace pragueParkingV2.Core.Services
         private List<ParkingSpot> parkingSpots;
         private ConfigData config;
 
-        // Konstruktorn som tar emot totalSpots och en ConfigData-parameter
+        // Denna är ny för att spara data men fungerar ej. 1
         public ParkingGarage(int totalSpots, ConfigData config)
         {
             this.config = config; // Tilldela config
-            parkingSpots = new List<ParkingSpot>();
-            for (int i = 1; i <= totalSpots; i++)
+            parkingSpots = LoadParkingData(); // Ladda befintliga parkeringsplatser från fil
+
+            if (parkingSpots.Count == 0)
             {
-                parkingSpots.Add(new ParkingSpot(i));
+                for (int i = 1; i <= totalSpots; i++) //Detta är nytt för att hantera storlek på p-platser. 1
+                {
+                    ParkingSpotSize size = (i <= 10) ? ParkingSpotSize.Small : (i <= 20 ? ParkingSpotSize.Medium : ParkingSpotSize.Large);
+                    parkingSpots.Add(new ParkingSpot(i, size)); // till hit är det ny. 1
+                }
+
             }
         }
+
+        // Ny metod för att ladda data
+        private List<ParkingSpot> LoadParkingData()
+        {
+            var dataAccess = new JsonDataAccess();
+            return dataAccess.LoadParkingData();
+        } // Tills hit är de nytt. 1
+
 
         // Överlagrad konstruktor som skapar en standardkonfiguration
         public ParkingGarage(int totalSpots) : this(totalSpots, new ConfigData())
@@ -67,6 +82,17 @@ namespace pragueParkingV2.Core.Services
         {
             return parkingSpots.Where(s => !s.IsOccupied).Select(s => s.SpotId);
         }
+        public TimeSpan GetParkingDuration(string licensePlate)
+        {
+            var spot = parkingSpots.Find(s => s.ParkedVehicle?.LicensePlate == licensePlate);
+            if (spot != null && spot.ParkedVehicle != null)
+            {
+                return DateTime.Now - spot.ParkedVehicle.ParkingTime;
+            }
+            return TimeSpan.Zero; // Om fordonet inte finns
+        }
+        
+
     }
 
 }

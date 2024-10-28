@@ -6,8 +6,14 @@
 
         public override decimal CalculateParkingFee()
         {
-            var hoursParked = (DateTime.Now - ParkingTime).TotalHours;
-            return (decimal)Math.Ceiling(hoursParked) * 20M; // 20 CZK per timme
+            var totalTimeParked = (DateTime.Now - ParkingTime).TotalMinutes;
+            if (totalTimeParked <= FreeMinutes) return 0;
+
+            var hoursParked = (decimal) Math.Ceiling((totalTimeParked - FreeMinutes) / 60);
+            return hoursParked * 20M; // 20 CZK per timme
         }
+
+
     }
+
 }
