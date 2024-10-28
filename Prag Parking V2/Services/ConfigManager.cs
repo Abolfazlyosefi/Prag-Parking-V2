@@ -7,7 +7,7 @@ namespace pragueParkingV2.Core.Services
     public class ConfigurationManager
     {
         private const string ConfigFilePath = "DataAccess/config.json";
-        private const string PricingFilePath = "DataAccess/pricing.json"; // Lägg till denna rad
+        private const string PricingFilePath = "DataAccess/pricList.txt"; // Lägg till denna rad
 
         public ConfigData LoadConfig()
         {

@@ -17,16 +17,19 @@ namespace pragueParkingV2.ConsoleApp
         {
             while (true)
             {
+                ShowWelcomeAnimation();
                 AnsiConsole.Clear();
-                AnsiConsole.MarkupLine(" ___    ____    ___                                        ___    ___");
-                AnsiConsole.MarkupLine("  \\\\    //\\\\    //   II===   II        //===     ====      //\\\\  //\\\\      II===");
-                AnsiConsole.MarkupLine("   \\\\  //  \\\\  //    II___   II       //       //    \\\\   //  \\\\//  \\\\     II___");
-                AnsiConsole.MarkupLine("    \\\\//    \\\\//     II      II       \\\\       \\\\    //  //    --    \\\\    II   ");
-                AnsiConsole.MarkupLine("     --      --      II===   II====    \\\\===     ====   //            \\\\   II===");
+                AnsiConsole.MarkupLine("    __   __        __        ___     __        __               __  ");
+                AnsiConsole.MarkupLine("   |__) |__)  /\\  / _` |  | |__     |__)  /\\  |__) |__/ | |\\ | / _` ");
+                AnsiConsole.MarkupLine("   |  \\ /~~\\ \\__> \\__/ |___    |    /~~\\ |  \\ |  \\ | | \\| \\__> ");
+                AnsiConsole.MarkupLine("                                                                                        ");
+
+
+
+
                 AnsiConsole.MarkupLine("");
 
                 AnsiConsole.MarkupLine("[bold green]Welcome to Prague Parking![/]");
-                AnsiConsole.MarkupLine("");
 
 
                 var choice = AnsiConsole.Prompt(
@@ -53,13 +56,62 @@ namespace pragueParkingV2.ConsoleApp
             }
         }
 
+        static void ShowWelcomeAnimation()
+        {
+            AnsiConsole.Clear();
+
+            // Welcome animation
+            var lines = new[]
+{
+    " ___    ____    ___                                        ___    ___",
+    "  \\\\    //\\\\    //   II===   II        //===     ====      //\\\\  //\\\\      II===",
+    "   \\\\  //  \\\\  //    II___   II       //       //    \\\\   //  \\\\//  \\\\     II___",
+    "    \\\\//    \\\\//     II      II       \\\\       \\\\    //  //    --    \\\\    II   ",
+    "     --      --      II===   II====    \\\\===     ====   //            \\\\   II===",
+};
+
+            // Skriv ut varje rad med kort fördröjning
+            foreach (var line in lines)
+            {
+                AnsiConsole.MarkupLine($"[bold green]{line}[/]");
+                Thread.Sleep(200);
+            }
+
+
+            // Kort paus efter "Welcome"
+            AnsiConsole.MarkupLine("");
+            AnsiConsole.MarkupLine("[bold blue]Welcome to Prague Parking![/]");
+            Thread.Sleep(800);
+            AnsiConsole.MarkupLine("");
+
+            // Öppningsfraser visas en i taget
+            AnsiConsole.MarkupLine("");
+            AnsiConsole.Markup("                  [bold red]Secure Parking![/]");
+            Thread.Sleep(800); // Kort paus
+            AnsiConsole.MarkupLine("");
+
+            AnsiConsole.MarkupLine(" ");
+            AnsiConsole.Markup("                                      [bold blue]Cheap Prices![/]");
+            Thread.Sleep(800); // Kort paus innan huvudmenyn visas
+            AnsiConsole.MarkupLine("");
+
+            AnsiConsole.MarkupLine("");
+            AnsiConsole.Markup("                                                        [bold yellow]Best Service![/]");
+            Thread.Sleep(1200); // Kort paus innan huvudmenyn visas
+        }
+
+
         public void ShowParkingGarageStatus()
         {
             AnsiConsole.Clear();
             AnsiConsole.MarkupLine("[bold blue]Parking Garage Status:[/]");
+
+            // Anropa den nya metoden för att visa kartan
             garage.DisplayGarageMap();
+
             AnsiConsole.Prompt(new TextPrompt<string>("[grey](Press any key to return)[/]"));
         }
+
 
         private void ParkVehicle()
         {
@@ -90,13 +142,9 @@ namespace pragueParkingV2.ConsoleApp
             AnsiConsole.MarkupLine("[bold yellow]Retrieve a Vehicle[/]");
             var licensePlate = AnsiConsole.Ask<string>("Enter the vehicle's license plate:");
 
-            // Hämta parkeringsdurationen
-            var duration = garage.GetParkingDuration(licensePlate);
-
             if (garage.RemoveVehicle(licensePlate))
             {
                 AnsiConsole.MarkupLine($"[green]Vehicle with license plate {licensePlate} has been retrieved.[/]");
-                AnsiConsole.MarkupLine($"[blue]It was parked for: {duration.TotalHours} hours and {duration.Minutes} minutes.[/]");
             }
             else
             {
@@ -104,8 +152,8 @@ namespace pragueParkingV2.ConsoleApp
             }
 
             AnsiConsole.Prompt(new TextPrompt<string>("[grey](Press any key to return)[/]"));
-        }
 
+        }
         private void Exit()
         {
             AnsiConsole.Clear();
@@ -131,3 +179,7 @@ namespace pragueParkingV2.ConsoleApp
     }
 
 }
+
+  
+                       
+          

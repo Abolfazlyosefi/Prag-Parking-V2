@@ -1,7 +1,8 @@
 ﻿
 using pragueParkingV2.Core.Models;
 using pragueParkingV2.DataAccess;
-
+using System.Text.Json;
+using Spectre.Console;
 namespace pragueParkingV2.Core.Services
 {
 
@@ -9,11 +10,13 @@ namespace pragueParkingV2.Core.Services
     {
         private List<ParkingSpot> parkingSpots;
         private ConfigData config;
+        private Pricing pricing;
 
         // Denna är ny för att spara data men fungerar ej. 1
         public ParkingGarage(int totalSpots, ConfigData config)
         {
             this.config = config; // Tilldela config
+            this.pricing = pricing;
             parkingSpots = LoadParkingData(); // Ladda befintliga parkeringsplatser från fil
 
             if (parkingSpots.Count == 0)
@@ -69,14 +72,55 @@ namespace pragueParkingV2.Core.Services
 
         public void DisplayGarageMap()
         {
-            foreach (var spot in parkingSpots)
+
+            AnsiConsole.Clear(); // Rensa konsolen för en ren vy
+            AnsiConsole.MarkupLine("[bold blue]Parking Garage Map:[/]");
+            AnsiConsole.MarkupLine("-------------------");
+
+            // Anta att vi har ett fast antal kolumner (exempelvis 10)
+            int columns = 10;
+            int rows = (int)Math.Ceiling((double)parkingSpots.Count / columns);
+
+            // Skapa en ny rad för varje parkeringsplats
+            for (int row = 0; row < rows; row++)
             {
-                if (spot.IsOccupied)
-                    System.Console.WriteLine($"Spot {spot.SpotId}: {spot.ParkedVehicle.LicensePlate}");
-                else
-                    System.Console.WriteLine($"Spot {spot.SpotId}: [Empty]");
+                var rowString = string.Empty;
+
+                for (int col = 0; col < columns; col++)
+                {
+                    int index = row * columns + col;
+
+                    if (index < parkingSpots.Count) // Kontrollera att index är inom gränserna
+                    {
+                        var spot = parkingSpots[index];
+                        if (spot.IsOccupied)
+                        {
+                            // Om platsen är upptagen, visa den med röd färg
+                            rowString += $"[red]X[/] "; // 'X' betyder upptagen
+                        }
+                        else
+                        {
+                            // Om platsen är ledig, visa den med grön färg
+                            rowString += $"[green]O[/] "; // 'O' betyder ledig
+                        }
+                    }
+                    else
+                    {
+                        // Om det inte finns fler platser, fyll med tomma utrymmen
+                        rowString += "[grey] [/] ";
+                    }
+                }
+
+                AnsiConsole.MarkupLine(rowString); // Visa raden i konsolen
             }
+
+            AnsiConsole.MarkupLine("-------------------");
+            AnsiConsole.MarkupLine($"Total available spots: [green]{GetAvailableSpots().Count()}[/]");
+
         }
+        
+
+
 
         public IEnumerable<int> GetAvailableSpots()
         {
@@ -91,8 +135,42 @@ namespace pragueParkingV2.Core.Services
             }
             return TimeSpan.Zero; // Om fordonet inte finns
         }
-        
 
+        public void SaveParkedVehicles()
+        {
+            var parkedVehicles = parkingSpots
+                .Where(s => s.IsOccupied)
+                .Select(s => new ParkedVehicle(s.ParkedVehicle.LicensePlate, s.ParkedVehicle.ParkingTime, s.ParkedVehicle.GetType().Name))
+                .ToList();
+
+            var json = JsonSerializer.Serialize(parkedVehicles, new JsonSerializerOptions { WriteIndented = true });
+            File.WriteAllText("DataAccess/parkedVehicles.json", json); // Spara till fil
+        }
+
+        public void LoadParkedVehicles()
+        {
+            if (File.Exists("DataAccess/parkedVehicles.json"))
+            {
+                var json = File.ReadAllText("DataAccess/parkedVehicles.json");
+                var parkedVehicles = JsonSerializer.Deserialize<List<ParkedVehicle>>(json);
+
+                foreach (var parkedVehicle in parkedVehicles)
+                {
+                    Vehicle vehicle = parkedVehicle.VehicleType switch
+                    {
+                        nameof(Car) => new Car(parkedVehicle.LicensePlate) { ParkingTime = parkedVehicle.ParkingTime },
+                        nameof(Motorcycle) => new Motorcycle(parkedVehicle.LicensePlate) { ParkingTime = parkedVehicle.ParkingTime },
+                        _ => throw new InvalidOperationException("Unknown vehicle type")
+                    };
+
+                    var spot = parkingSpots.FirstOrDefault(s => !s.IsOccupied);
+                    if (spot != null)
+                    {
+                        spot.Park(vehicle);
+                    }
+                }
+            }
+        }
     }
 
 }
