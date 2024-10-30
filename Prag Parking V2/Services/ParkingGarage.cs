@@ -31,7 +31,7 @@ namespace pragueParkingV2.Core.Services
                 }
             }
         }
-
+        //
         public Dictionary<string, int> GetPricing()
         {
             return pricing; // Returnera den laddade prissättningen
