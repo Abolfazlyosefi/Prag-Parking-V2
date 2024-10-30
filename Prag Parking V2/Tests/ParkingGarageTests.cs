@@ -7,10 +7,23 @@ namespace pragueParkingV2.Tests
     [TestClass]
     public class ParkingGarageTests
     {
+        private ConfigurationManager configManager; // Lägg till denna rad
+        private ConfigData configData; // Lägg till denna rad
+
+        [TestInitialize]
+        public void Setup()
+        {
+            configManager = new ConfigurationManager(); // Initiera ConfigurationManager
+            configData = configManager.LoadConfig(); // Ladda konfigurationen
+        }
+
         [TestMethod]
         public void TestParkVehicle()
         {
-            var garage = new ParkingGarage(100, new ConfigData());
+            var configManager = new ConfigurationManager();
+            var config = configManager.LoadConfig(); // Ladda config
+
+            var garage = new ParkingGarage(100, config, configManager); // Ändrad instansiering
             var car = new Car("ABC123");
 
             var result = garage.ParkVehicle(car);
@@ -21,7 +34,10 @@ namespace pragueParkingV2.Tests
         [TestMethod]
         public void TestRemoveVehicle()
         {
-            var garage = new ParkingGarage(100, new ConfigData());
+            var configManager = new ConfigurationManager();
+            var config = configManager.LoadConfig(); // Ladda config
+
+            var garage = new ParkingGarage(100, config, configManager); // Ändrad instansiering
             var car = new Car("ABC123");
 
             garage.ParkVehicle(car);
@@ -29,5 +45,6 @@ namespace pragueParkingV2.Tests
 
             Assert.IsTrue(result);
         }
+
     }
 }

@@ -3,6 +3,7 @@ using pragueParkingV2.Core.Models;
 using pragueParkingV2.DataAccess;
 using System.Text.Json;
 using Spectre.Console;
+
 namespace pragueParkingV2.Core.Services
 {
 
@@ -10,25 +11,44 @@ namespace pragueParkingV2.Core.Services
     {
         private List<ParkingSpot> parkingSpots;
         private ConfigData config;
-        private Pricing pricing;
+        private Dictionary<string, int> pricing;
 
         // Denna är ny för att spara data men fungerar ej. 1
-        public ParkingGarage(int totalSpots, ConfigData config)
+        public ParkingGarage(int totalSpots, ConfigData config, ConfigurationManager configManager)
         {
-            this.config = config; // Tilldela config
-            this.pricing = pricing;
+            this.config = config; // Ladda konfiguration
+            this.pricing = config.LoadPricing(configManager); // Ladda prissättning
             parkingSpots = LoadParkingData(); // Ladda befintliga parkeringsplatser från fil
 
             if (parkingSpots.Count == 0)
             {
-                for (int i = 1; i <= totalSpots; i++) //Detta är nytt för att hantera storlek på p-platser. 1
+                for (int i = 1; i <= totalSpots; i++)
                 {
-                    ParkingSpotSize size = (i <= 10) ? ParkingSpotSize.Small : (i <= 20 ? ParkingSpotSize.Medium : ParkingSpotSize.Large);
-                    parkingSpots.Add(new ParkingSpot(i, size)); // till hit är det ny. 1
+                    ParkingSpotSize size = (i <= 10) ? ParkingSpotSize.Small :
+                                           (i <= 20 ? ParkingSpotSize.Medium :
+                                           ParkingSpotSize.Large);
+                    parkingSpots.Add(new ParkingSpot(i, size));
                 }
-
             }
         }
+
+        public Dictionary<string, int> GetPricing()
+        {
+            return pricing; // Returnera den laddade prissättningen
+        }
+
+
+        // Metod för att uppdatera prislistan från ConfigurationManager
+        public void ReloadPricing(ConfigurationManager configManager)
+        {
+            var newPricing = configManager.LoadPricingConfig();
+            UpdatePricing(newPricing); // Uppdatera prislistan i `ParkingGarage`
+        }
+        public void UpdatePricing(Dictionary<string, int> newPricing)
+        {
+            pricing = newPricing;
+        }
+
 
         // Ny metod för att ladda data
         private List<ParkingSpot> LoadParkingData()
@@ -38,10 +58,28 @@ namespace pragueParkingV2.Core.Services
         } // Tills hit är de nytt. 1
 
 
-        // Överlagrad konstruktor som skapar en standardkonfiguration
-        public ParkingGarage(int totalSpots) : this(totalSpots, new ConfigData())
+
+
+
+        public int CalculateParkingFee(string licensePlate)
         {
+            var spot = parkingSpots.Find(s => s.ParkedVehicle?.LicensePlate == licensePlate);
+            if (spot != null && spot.ParkedVehicle != null)
+            {
+                var duration = DateTime.Now - spot.ParkedVehicle.ParkingTime;
+                var vehicleType = spot.ParkedVehicle.GetType().Name;
+
+                // Hämta priset för fordonstypen från prislistan
+                if (pricing.TryGetValue(vehicleType, out int hourlyRate))
+                {
+                    int hours = (int)Math.Ceiling(duration.TotalHours);
+                    return hours * hourlyRate;
+                }
+            }
+            return 0; // Returnera 0 om priset eller fordonet inte finns
         }
+
+
 
         public bool ParkVehicle(Vehicle vehicle)
         {
@@ -50,14 +88,22 @@ namespace pragueParkingV2.Core.Services
                 throw new ArgumentNullException(nameof(vehicle), "Vehicle cannot be null.");
             }
 
+            // Kontrollera om ett fordon med samma registreringsnummer redan är parkerat
+            if (parkingSpots.Any(s => s.ParkedVehicle?.LicensePlate == vehicle.LicensePlate))
+            {
+                // Om fordonet redan är parkerat, returnera false
+                return false;
+            }
+
             var spot = parkingSpots.Find(s => !s.IsOccupied);
             if (spot != null)
             {
                 spot.Park(vehicle);
                 return true;
             }
-            return false;
+            return false; // Ingen ledig plats
         }
+
 
         public bool RemoveVehicle(string licensePlate)
         {
@@ -170,6 +216,22 @@ namespace pragueParkingV2.Core.Services
                     }
                 }
             }
+        }
+
+        public void RemoveAllVehicles()
+        {
+            foreach (var spot in parkingSpots)
+            {
+                if (spot.IsOccupied)
+                {
+                    spot.RemoveVehicle(); // Ta bort fordonet
+                }
+            }
+        }
+
+        internal IEnumerable<object> GetParkingSpots()
+        {
+            throw new NotImplementedException();
         }
     }
 

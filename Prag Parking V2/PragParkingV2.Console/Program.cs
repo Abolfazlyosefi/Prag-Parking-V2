@@ -1,4 +1,5 @@
 ﻿using pragueParkingV2.Core.Services;
+using System.Text;
 
 namespace pragueParkingV2.ConsoleApp
 {
@@ -6,14 +7,15 @@ namespace pragueParkingV2.ConsoleApp
     {
         static void Main(string[] args)
         {
+            Console.OutputEncoding = Encoding.UTF8;
 
 
             // Ladda konfigurationen från fil
             var configManager = new ConfigurationManager();
             var config = configManager.LoadConfig();
 
-            // Skapa ett nytt parkeringsgarage
-            var garage = new ParkingGarage(config.TotalParkingSpots, config);
+            // Skapa ett nytt parkeringsgarage och skicka in configManager
+            var garage = new ParkingGarage(config.TotalParkingSpots, config, configManager);
 
             garage.LoadParkedVehicles();
 
@@ -23,7 +25,6 @@ namespace pragueParkingV2.ConsoleApp
             AppDomain.CurrentDomain.ProcessExit += (s, e) => garage.SaveParkedVehicles();
 
             display.ShowMainMenu();
-           
         }
     }
 }

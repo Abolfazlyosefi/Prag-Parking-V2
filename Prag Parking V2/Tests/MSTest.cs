@@ -10,9 +10,14 @@ public class ParkingGarageTests
     [TestInitialize]
     public void Setup()
     {
-        // Denna metod körs innan varje test
-        garage = new ParkingGarage(10); // Skapa en ny instans av ParkingGarage
+        // Ladda konfigurationen från fil
+        var configManager = new ConfigurationManager();
+        var config = configManager.LoadConfig(); // Ladda config
+
+        // Skapa en ny instans av ParkingGarage
+        garage = new ParkingGarage(10, config, configManager); // Ändrad instansiering
     }
+
 
     [TestMethod]
     public void TestParkVehicle_Success()
