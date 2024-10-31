@@ -31,7 +31,7 @@ namespace pragueParkingV2.Core.Services
                 }
             }
         }
-        //
+        
         public Dictionary<string, int> GetPricing()
         {
             return pricing; // Returnera den laddade prissättningen
@@ -112,6 +112,8 @@ namespace pragueParkingV2.Core.Services
         }
 
 
+
+
         public bool RemoveVehicle(string licensePlate)
         {
             Console.WriteLine("Trying to remove vehicle with license plate: " + licensePlate);
@@ -173,8 +175,42 @@ namespace pragueParkingV2.Core.Services
             AnsiConsole.MarkupLine($"Total available spots: [green]{GetAvailableSpots().Count()}[/]");
 
         }
-        
 
+
+        public bool MoveVehicle(string licensePlate, int targetSpotId)
+        {
+            // Hitta parkeringsplatsen där fordonet för närvarande står
+            var currentSpot = parkingSpots.Find(s => s.ParkedVehicle?.LicensePlate == licensePlate);
+
+            if (currentSpot == null)
+            {
+                Console.WriteLine("Vehicle not found in the parking garage.");
+                return false; // Fordonet finns inte i garaget
+            }
+
+            // Kontrollera att målplatsen är inom giltigt område
+            if (targetSpotId <= 0 || targetSpotId > parkingSpots.Count)
+            {
+                Console.WriteLine("Invalid target parking spot ID.");
+                return false;
+            }
+
+            // Hitta målplatsen och kontrollera om den är ledig
+            var targetSpot = parkingSpots[targetSpotId - 1]; // Minus 1 för att matcha lista-index
+            if (targetSpot.IsOccupied)
+            {
+                Console.WriteLine("Target parking spot is already occupied.");
+                return false; // Målplatsen är upptagen
+            }
+
+            // Utför förflyttningen: ta bort från nuvarande plats och parkera på målplatsen
+            var vehicle = currentSpot.ParkedVehicle;
+            currentSpot.RemoveVehicle(); // Ta bort fordonet från dess nuvarande plats
+            targetSpot.Park(vehicle); // Parkera fordonet på målplatsen
+
+            Console.WriteLine($"Vehicle with license plate {licensePlate} has been moved to spot {targetSpotId}.");
+            return true; // Förflyttningen lyckades
+        }
 
 
         public IEnumerable<int> GetAvailableSpots()
@@ -238,9 +274,9 @@ namespace pragueParkingV2.Core.Services
             }
         }
 
-        internal IEnumerable<object> GetParkingSpots()
+        public IEnumerable<ParkingSpot> GetParkingSpots()
         {
-            throw new NotImplementedException();
+            return parkingSpots; // Där parkingSpots är av typen List<ParkingSpot> eller liknande
         }
     }
 

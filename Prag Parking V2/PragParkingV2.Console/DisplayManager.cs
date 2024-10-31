@@ -149,7 +149,7 @@ namespace pragueParkingV2.ConsoleApp
             }
 
             // Fråga användaren om registreringsnummer (utan prefix)
-            var licensePlate = AnsiConsole.Ask<string>("Enter the vehicle's license plate (ABC123):").ToUpper();
+            var licensePlate = AnsiConsole.Ask<string>("Please enter your the vehicle's license plate:").ToUpper();
 
             // Kontrollera längden på registreringsnumret
             if (licensePlate.Length < 6 || licensePlate.Length > 10)
@@ -195,6 +195,8 @@ namespace pragueParkingV2.ConsoleApp
 
             AnsiConsole.MarkupLine("[grey](Press any key to return)[/]");
             Console.ReadKey(true);
+
+
         }
 
 
@@ -236,7 +238,7 @@ namespace pragueParkingV2.ConsoleApp
                 parkingFee = garage.CalculateParkingFee(vehicleId);
 
                 AnsiConsole.MarkupLine($"[green]Vehicle with ID {vehicleId} has been retrieved.[/]");
-                AnsiConsole.MarkupLine($"[bold yellow]Total parking fee: {parkingFee} kr[/]");
+                AnsiConsole.MarkupLine($"[bold yellow]Total parking fee: {parkingFee} CZK[/]");
             }
             else
             {
@@ -299,8 +301,8 @@ namespace pragueParkingV2.ConsoleApp
 
             AnsiConsole.MarkupLine($"[green]Pricing list has been reloaded successfully![/]");
             AnsiConsole.MarkupLine($"[bold yellow]Updated Prices:[/]");
-            AnsiConsole.MarkupLine($"Car: {carPrice} kr per hour");
-            AnsiConsole.MarkupLine($"Motorcycle: {motorcyclePrice} kr per hour");
+            AnsiConsole.MarkupLine($"Car: {carPrice} CZK per hour");
+            AnsiConsole.MarkupLine($"Motorcycle: {motorcyclePrice} CZK per hour");
             AnsiConsole.MarkupLine($"First {freeMinutes} minutes are free of charge.");
             ShowPricingList();
         }
@@ -315,7 +317,7 @@ namespace pragueParkingV2.ConsoleApp
 
             foreach (var item in pricing)
             {
-                AnsiConsole.MarkupLine($"[bold yellow]{item.Key}:[/] {item.Value} kr");
+                AnsiConsole.MarkupLine($"[bold yellow]{item.Key}:[/] {item.Value} CZKi");
             }
 
             AnsiConsole.MarkupLine("[grey](Press any key to return)[/]");

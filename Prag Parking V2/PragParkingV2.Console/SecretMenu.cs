@@ -101,38 +101,59 @@ namespace Prag_Parking_V2.PragParkingV2.Console
             {
                 AnsiConsole.MarkupLine("[bold blue]Currently parked vehicles:[/]");
 
+                // Skapa en tabell för att strukturera visningen
+                var table = new Table();
+                table.AddColumn("Spot ID");
+                table.AddColumn("Status");
+                table.AddColumn("License Plate");
+                table.AddColumn("Parking Duration");
+                table.AddColumn("Current Fee (CZK)");
+
                 foreach (var spot in _garage.GetParkingSpots())
                 {
-                    var parkingSpot = spot as ParkingSpot;
-
-                    if (parkingSpot != null)
+                    if (spot is ParkingSpot parkingSpot)
                     {
+                        // Om platsen är upptagen, visa registreringsnummer och parkerad tid
                         if (parkingSpot.IsOccupied)
                         {
-                            AnsiConsole.MarkupLine($"[green]Spot {parkingSpot.SpotId}: {parkingSpot.ParkedVehicle.LicensePlate}[/]");
-                            Thread.Sleep(12200);
+                            TimeSpan duration = _garage.GetParkingDuration(parkingSpot.ParkedVehicle.LicensePlate);
+                            int currentFee = _garage.CalculateParkingFee(parkingSpot.ParkedVehicle.LicensePlate); // Beräkna avgiften
 
+                            table.AddRow(
+                                parkingSpot.SpotId.ToString(),
+                                "[red]Occupied[/]",
+                                parkingSpot.ParkedVehicle.LicensePlate,
+                                $"{duration.Hours}h {duration.Minutes}m",
+                                $"{currentFee} CZK" // Visa aktuell avgift
+                            );
                         }
                         else
                         {
-                            AnsiConsole.MarkupLine($"[red]Spot {parkingSpot.SpotId}: Empty[/]");
+                            // Om platsen är ledig, visa "Empty"
+                            table.AddRow(
+                                parkingSpot.SpotId.ToString(),
+                                "[green]Empty[/]",
+                                "-",
+                                "-",
+                                "-" // Ingen avgift för lediga platser
+                            );
                         }
                     }
-                    else
-                    {
-                        AnsiConsole.MarkupLine("[red]Error: Invalid parking spot.[/]");
-                    }
                 }
+
+                // Visa tabellen i konsolen
+                AnsiConsole.Write(table);
             }
             catch (Exception ex)
             {
                 AnsiConsole.MarkupLine($"[red]Error: {ex.Message}[/]");
             }
 
-            // Vänta på att användaren ska trycka på en tangent
-            AnsiConsole.MarkupLine("[yellow]Press any key to continue...[/]");
-            //Console.Readline();
+            // När alla fordon har visats
+            AnsiConsole.MarkupLine("[yellow]Finished viewing parked vehicles. Press any key to return...[/]");
+            AnsiConsole.Console.Input.ReadKey(false);
         }
+
 
 
         private void UpdatePricing()
