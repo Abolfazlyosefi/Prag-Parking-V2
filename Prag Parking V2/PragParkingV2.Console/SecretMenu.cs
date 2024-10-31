@@ -160,8 +160,7 @@ namespace Prag_Parking_V2.PragParkingV2.Console
         {
             // Implementera logik för att uppdatera prissättning
             AnsiConsole.MarkupLine("[bold blue]Update Pricing[/]");
-            // Exempel på hur man kan fråga efter nya priser
-            // Logik för att uppdatera prissättning kan läggas här
+            
         }
     }
 }

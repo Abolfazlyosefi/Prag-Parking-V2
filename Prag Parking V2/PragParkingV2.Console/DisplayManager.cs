@@ -29,7 +29,7 @@ namespace pragueParkingV2.ConsoleApp
                 AnsiConsole.Clear();
                 AnsiConsole.MarkupLine("    __   __        __        ___     __        __               __  ");
                 AnsiConsole.MarkupLine("   |__) |__)  /\\  / _` |  | |__     |__)  /\\  |__) |__/ | |\\ | / _` ");
-                AnsiConsole.MarkupLine("   |  \\ |  \\ /~~\\ \\__> \\__/ |___    |    /~~\\ |  \\ |  \\ | | \\| \\__> ");
+                AnsiConsole.MarkupLine("   |     |  \\ /~~\\ \\__> \\__/ |___    |    /~~\\ |  \\ |  \\ | | \\| \\__> ");
                 AnsiConsole.MarkupLine("                                                                      ");
 
 
@@ -43,7 +43,7 @@ namespace pragueParkingV2.ConsoleApp
                 var choice = AnsiConsole.Prompt(
                     new SelectionPrompt<string>()
                         .Title("What would you like to do today?")
-                        .AddChoices(new[] { "Park a vehicle", "Retrieve a vehicle", "Show parking garage status", "Reload pricing list", "Secret menu",  "Exit" })); // Lägg till menyval
+                        .AddChoices(new[] { "Park a vehicle", "Retrieve a vehicle", "Move a vehicle",  "Show parking garage status", "Reload pricing list", "Secret menu",  "Exit" })); // Lägg till menyval
                 
                 switch (choice)
                 {
@@ -53,6 +53,9 @@ namespace pragueParkingV2.ConsoleApp
                     case "Retrieve a vehicle":
                         RetrieveVehicle();
                         break;
+                    case "Move a vehicle":
+                        MoveVehicle();
+                        break; 
                     case "Show parking garage status":
                         ShowParkingGarageStatus();
                         break;
@@ -243,6 +246,39 @@ namespace pragueParkingV2.ConsoleApp
             else
             {
                 AnsiConsole.MarkupLine("[red]Vehicle not found.[/]");
+            }
+
+            AnsiConsole.MarkupLine("[grey](Press any key to return)[/]");
+            Console.ReadKey(true);
+        }
+
+        private void MoveVehicle()
+        {
+            AnsiConsole.Clear();
+            AnsiConsole.MarkupLine("[bold blue]Move Vehicle[/]");
+
+            var licensePlate = AnsiConsole.Ask<string>("Enter the vehicle's license plate (ABC123):").ToUpper();
+
+            // Fråga användaren om fordonstyp
+            var vehicleType = AnsiConsole.Ask<string>("Is it a car or motorcycle? (Type 'car' or 'mc')").ToUpper();
+            if (vehicleType != "CAR" && vehicleType != "MC")
+            {
+                AnsiConsole.MarkupLine("[red]Invalid vehicle type. Please enter 'car' or 'mc'.[/]");
+                return;
+            }
+
+            var targetSpotId = AnsiConsole.Ask<int>("Please enter the parking spot number:");
+
+            // Försök att flytta fordonet med hashtaggen
+            bool success = garage.MoveVehicle($"{vehicleType}#{licensePlate}", vehicleType, targetSpotId);
+
+            if (success)
+            {
+                AnsiConsole.MarkupLine($"[green]Vehicle {licensePlate} moved to parking spot {targetSpotId} successfully![/]");
+            }
+            else
+            {
+                AnsiConsole.MarkupLine("[red]Failed to move vehicle. Please check if the vehicle exists and the target spot is available.[/]");
             }
 
             AnsiConsole.MarkupLine("[grey](Press any key to return)[/]");

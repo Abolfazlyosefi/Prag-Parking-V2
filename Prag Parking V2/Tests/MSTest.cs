@@ -60,7 +60,6 @@ public class ParkingGarageTests
     public void TestDisplayGarageMap()
     {
         // Detta kan vara svårt att testa direkt eftersom det skriver till konsolen
-        // Du kan överväga att omstrukturera metoden för att returnera en sträng istället för att skriva ut
-        garage.DisplayGarageMap(); // Kör metoden för att se om den fungerar utan fel
+        garage.DisplayGarageMap(); 
     }
 }

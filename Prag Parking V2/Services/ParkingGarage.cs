@@ -263,6 +263,31 @@ namespace pragueParkingV2.Core.Services
             }
         }
 
+        public bool MoveVehicle(string formattedLicensePlate, string vehicleType, int targetSpotId)
+        {
+            // Hitta parkeringsplatsen med fordonet
+            var parkedSpot = parkingSpots.FirstOrDefault(s => s.ParkedVehicle?.LicensePlate == formattedLicensePlate);
+
+            // Kontrollera att fordonet finns
+            if (parkedSpot == null || !parkedSpot.IsOccupied)
+            {
+                return false; // Fordonet finns inte eller är inte parkerat
+            }
+
+            // Hitta den nya parkeringsplatsen
+            var targetSpot = parkingSpots.FirstOrDefault(s => s.SpotId == targetSpotId);
+            if (targetSpot == null || targetSpot.IsOccupied)
+            {
+                return false; // Målparkeringen är inte tillgänglig
+            }
+
+            // Flytta fordonet
+            targetSpot.Park(parkedSpot.ParkedVehicle); // Parka fordonet på den nya platsen
+            parkedSpot.RemoveVehicle(); // Ta bort fordonet från den gamla platsen
+
+            return true; // Flyttningen lyckades
+        }
+
         public void RemoveAllVehicles()
         {
             foreach (var spot in parkingSpots)
