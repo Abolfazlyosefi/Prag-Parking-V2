@@ -235,7 +235,7 @@ namespace pragueParkingV2.Core.Services
                 .ToList();
 
             var json = JsonSerializer.Serialize(parkedVehicles, new JsonSerializerOptions { WriteIndented = true });
-            File.WriteAllText("DataAccess/parkedVehicles.json", json); // Spara till fil
+            File.WriteAllText("DataAccess/parkedVehicles.json", json); // Spara till fil.
         }
 
         public void LoadParkedVehicles()
