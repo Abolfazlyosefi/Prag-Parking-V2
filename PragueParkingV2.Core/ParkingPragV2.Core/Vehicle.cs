@@ -3,10 +3,10 @@
 
     public class Vehicle
     {
-        public string LicensePlate { get; set; } // Registreringsnummer för fordonet
+        public string LicensePlate { get; set; } 
         public DateTime ParkingTime { get; set; } // Tidpunkt då fordonet parkerades
 
-        // Egenskap för att definiera antal gratis minuter (standardvärde 10)
+        // Egenskap för att definiera antal gratis minuter 10
         public virtual int FreeMinutes { get; } = 10;
 
         // Ny egenskap för fordonets storlek
@@ -22,7 +22,7 @@
         // Abstrakt metod för att beräkna parkeringsavgiften, som nu implementeras av underklasser
         public virtual decimal CalculateParkingFee()
         {
-            return 0; // Standard logik för avgift kan sättas här om du vill.
+            return 0; 
         }
     }
 }

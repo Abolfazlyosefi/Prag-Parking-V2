@@ -13,14 +13,14 @@ namespace pragueParkingV2.Core.Models
 
     public class ParkingSpot
     {
-        [JsonProperty("FirstParkedVehicle")] // Nytt namn för det första parkerade fordonet
+        [JsonProperty("FirstParkedVehicle")] 
         public Vehicle ParkedVehicle => ParkedVehicles.FirstOrDefault();  // Första parkerade fordonet
 
         [JsonProperty("ParkedVehiclesList")] // Namn för listan av parkerade fordon
         public List<Vehicle> ParkedVehicles { get; } = new List<Vehicle>();  // Lista över parkerade fordon
 
         public int CurrentSizeOccupied { get; private set; } = 0;  // Total storlek upptagen på platsen
-        public int MaxSize { get; set; } = 4;  // Max storlek på parkeringsplatsen (för två motorcyklar eller en bil)
+        public int MaxSize { get; set; } = 4;  // Max storlek 4
 
         public int SpotId { get; }
 
@@ -29,7 +29,7 @@ namespace pragueParkingV2.Core.Models
             SpotId = spotId;
         }
 
-        // Parkera ett fordon
+        
         public bool Park(Vehicle vehicle)
         {
             // Kontrollera om det är en bil eller motorcykel
@@ -48,11 +48,11 @@ namespace pragueParkingV2.Core.Models
                 if (ParkedVehicles.OfType<Motorcycle>().Count() >= 2)
                 {
                     Console.WriteLine($"Platsen {SpotId} är full för motorcyklar.");
-                    return false;  // Det finns redan två motorcyklar, så vi kan inte parkera fler motorcyklar
+                    return false;  
                 }
             }
 
-            // Om det finns tillräckligt med plats för det nya fordonet (t.ex. två motorcyklar får plats)
+            
             if (CurrentSizeOccupied + vehicle.Size <= MaxSize)
             {
                 ParkedVehicles.Add(vehicle);  // Lägg till fordonet i listan
@@ -62,11 +62,11 @@ namespace pragueParkingV2.Core.Models
             else
             {
                 Console.WriteLine($"Platsen {SpotId} har inte tillräckligt med utrymme för {vehicle.LicensePlate}.");
-                return false;  // Inte tillräckligt med plats
+                return false; 
             }
         }
 
-        // Ta bort ett fordon
+       
         public void RemoveVehicle(Vehicle vehicle)
         {
             if (ParkedVehicles.Remove(vehicle))

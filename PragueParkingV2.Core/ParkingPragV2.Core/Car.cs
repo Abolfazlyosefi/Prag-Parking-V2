@@ -13,7 +13,7 @@
             if (totalTimeParked <= FreeMinutes) return 0;
 
             var hoursParked = (decimal)Math.Ceiling((totalTimeParked - FreeMinutes) / 60);
-            return hoursParked * 20M; // Exempelpris för bil
+            return hoursParked * 20M; 
         }
     }
 }

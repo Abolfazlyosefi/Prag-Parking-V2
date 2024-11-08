@@ -48,7 +48,7 @@ namespace PragueParkingV2.Core.Services
         public void ReloadPricing(ConfigurationManager configManager)
         {
             var newPricing = configManager.LoadPricingConfig();
-            UpdatePricing(newPricing); // Uppdatera prislistan i `ParkingGarage`
+            UpdatePricing(newPricing); 
         }
         public void UpdatePricing(Dictionary<string, int> newPricing)
         {
@@ -61,7 +61,7 @@ namespace PragueParkingV2.Core.Services
         {
             var dataAccess = new JsonDataAccess();
             return dataAccess.LoadParkingData();
-        } // Tills hit är de nytt. 1
+        } 
 
 
         public bool TryParkVehicle(Vehicle vehicle)
@@ -309,23 +309,23 @@ namespace PragueParkingV2.Core.Services
             // Kontrollera att fordonet finns
             if (parkedSpot == null || !parkedSpot.IsOccupied)
             {
-                return false; // Fordonet finns inte eller är inte parkerat
+                return false; 
             }
 
             // Hitta den nya parkeringsplatsen
             var targetSpot = parkingSpots.FirstOrDefault(s => s.SpotId == targetSpotId);
             if (targetSpot == null || targetSpot.IsOccupied)
             {
-                return false; // Målparkeringen är inte tillgänglig
+                return false; 
             }
 
             // Flytta fordonet
             targetSpot.Park(parkedSpot.ParkedVehicle); // Parka fordonet på den nya platsen
             parkedSpot.RemoveVehicle(parkedSpot.ParkedVehicle);
 
-            // Ta bort fordonet från den gamla platsen
+            
 
-            return true; // Flyttningen lyckades
+            return true; 
         }
 
         public void RemoveAllVehicles()
@@ -342,7 +342,7 @@ namespace PragueParkingV2.Core.Services
 
         public IEnumerable<ParkingSpot> GetParkingSpots()
         {
-            return parkingSpots; // Där parkingSpots är av typen List<ParkingSpot> eller liknande
+            return parkingSpots; 
         }
     }
 

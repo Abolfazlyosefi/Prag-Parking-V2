@@ -4,7 +4,7 @@
     {
         public Motorcycle(string licensePlate) : base(licensePlate)
         {
-            Size = 2; // Sätt storleken till 1 för motorcyklar (inte 2 som för bilar)
+            Size = 2; //storlek 2
         }
 
         public override decimal CalculateParkingFee()
